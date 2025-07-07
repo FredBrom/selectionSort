@@ -2,12 +2,14 @@
 
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99 -MMD -MP
-LDFLAGS = 
+PROJECT = selectsort
+LDFLAGS = -lprintVector 
 INCLUDE_DIR = include
 SRC_DIR = src
 OBJ_DIR = obj
 BIN_DIR = bin
 TEST_DIR = test
+LIB_DIR = lib
 
 # === source Files and Obj ===
 
@@ -26,7 +28,7 @@ TEST_BINS := $(patsubst $(TEST_DIR)/%.c,$(BIN_DIR)/%,$(TEST_SRC))
 
 # === Rules ===
 
-.PHONY: all clean test run make_dirs
+.PHONY: all clean test run make_dirs lib
 
 all: make_dirs $(OBJ_FILES) $(TEST_BINS)
 
@@ -36,7 +38,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 # compile test
 $(BIN_DIR)/%: $(TEST_DIR)/%.c $(OBJ_FILES)
-	$(CC) $(CFLAGS) $(LDFLAGS) -I$(INCLUDE_DIR) $(OBJ_FILES) $< -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) -I$(INCLUDE_DIR) -L$(LIB_DIR) $(OBJ_FILES) $< -o $@
 
 # main exex
 $(MAIN_EXEC): $(OBJ_FILES)
@@ -55,9 +57,14 @@ test: make_dirs $(OBJ_FILES) $(TEST_BINS)
 run: $(MAIN_EXEC)
 	./$(MAIN_EXEC)
 
+# Make lib
+lib: make_dirs $(OBJ_FILES)
+	ar rcs $(LIB_DIR)/lib$(PROJECT).a $(OBJ_FILES)
+	tar cvfz LIB_$(PROJECT).tar.gz ./lib/lib$(PROJECT).a ./include/$(PROJECT).h
+
 # make dirs
 make_dirs:
-	mkdir -p $(OBJ_DIR) $(BIN_DIR)
+	mkdir -p $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR)
 
 # clean all
 clean:
