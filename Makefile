@@ -3,7 +3,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99 -MMD -MP
 PROJECT = selectsort
-LDFLAGS = -lprintVector 
+LDFLAGS = -lprintVector -lselectsort
 INCLUDE_DIR = include
 SRC_DIR = src
 OBJ_DIR = obj
@@ -30,7 +30,7 @@ TEST_BINS := $(patsubst $(TEST_DIR)/%.c,$(BIN_DIR)/%,$(TEST_SRC))
 
 .PHONY: all clean test run make_dirs lib
 
-all: make_dirs $(OBJ_FILES) $(TEST_BINS)
+all: make_dirs $(OBJ_FILES) lib $(TEST_BINS)
 
 # compile .o
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
@@ -38,7 +38,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 # compile test
 $(BIN_DIR)/%: $(TEST_DIR)/%.c $(OBJ_FILES)
-	$(CC) $(CFLAGS) $(LDFLAGS) -I$(INCLUDE_DIR) -L$(LIB_DIR) $(OBJ_FILES) $< -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) -I$(INCLUDE_DIR) -L$(LIB_DIR) $< -o $@
 
 # main exex
 $(MAIN_EXEC): $(OBJ_FILES)
@@ -68,7 +68,7 @@ make_dirs:
 
 # clean all
 clean:
-	rm -rf $(OBJ_DIR) $(BIN_DIR)
+	rm -rf $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR)/lib$(PROJECT).a
 
 # Dependece files .d
 -include $(DEP_FILES)
